@@ -1,21 +1,17 @@
 import React from 'react';
 import ItemService from '../services/ItemService';
-import { outputIsInInput } from './helpers';
 
-export const useGetItems = (inputIds, outputIds) => {
+export const useGetItems = () => {
     const [items, setItems] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
 
-    const getItems = React.useCallback(async () => {
+    const getItems = React.useCallback(async (inputIds) => {
         try {
             setLoading(true);
             const itemResponseCollection = await Promise.all([
                 ...inputIds.map(async (item) => {
                     return ItemService.getItem(item);
-                }),
-                ...(outputIsInInput(inputIds, outputIds)
-                    ? []
-                    : [ItemService.getItem(outputIds[0])]),
+                })
             ]);
             const collection = itemResponseCollection.map(
                 (itemResponse) => itemResponse?.data?.result,
@@ -26,11 +22,7 @@ export const useGetItems = (inputIds, outputIds) => {
         } finally {
             setLoading(false);
         }
-    }, [inputIds, outputIds]);
+    }, []);
 
-    React.useEffect(() => {
-        getItems();
-    }, [getItems]);
-
-    return {items, loading};
+    return {items, loading, getItems};
 };

@@ -1,45 +1,44 @@
 import React from 'react';
 import { formatPrice } from '../helpers';
-import { subtotal, multiplyCountPrice, findItemByKey } from './helpers';
+import { subtotal, multiplyCountPrice } from './helpers';
 import { ItemTile } from './Item';
-import { useGetItems } from './hooks';
 
 const RecipeComponent = (props) => {
     const { input, output } = props;
-    const RECIPE_INPUT_IDS = React.useMemo(() => Object.keys(input), [input]);
-    const RECIPE_OUTPUT_IDS = React.useMemo(() => Object.keys(output), [output]);
-    const { items, loading } = useGetItems(RECIPE_INPUT_IDS, RECIPE_OUTPUT_IDS);
-    const ingredients = [...items.slice(0, 4)];
-
-    const outputItem = findItemByKey(items, 'data_id', Number(RECIPE_OUTPUT_IDS[0]));
+    const dataInput = Object.keys(input);
+    const dataOutput = Object.keys(output);
 
     return (
         <>
-            {Boolean(items.length) && !loading && (
+            {Boolean(true) && (
                 <div>
-                    {ingredients.map((item, i) => (
-                        <React.Fragment key={item.data_id}>
-                            <ItemTile type="input" item={item} recipe={{input, output}} />
-                            {i < items.length - 1 ? '+' : ''}
+                    {dataInput.map((itemId, i) => (
+                        <React.Fragment key={itemId}>
+                            <ItemTile {...input[itemId]} />
+                            {i < dataInput.length - 1 ? '+' : ''}
                         </React.Fragment>
                     ))}
                     =
-                    {outputItem && (
-                        <ItemTile type={'output'} item={outputItem} recipe={{ input, output }} />
-                    )}
-                    {outputItem &&
-                        formatPrice(
-                            Math.floor(
-                                multiplyCountPrice(
-                                    outputItem?.['min_sale_unit_price'],
-                                    output[RECIPE_OUTPUT_IDS[0]],
-                                ) - subtotal(ingredients, 'min_sale_unit_price', { input, output }),
-                            ),
-                        )}
+                    {Boolean(dataOutput.length) &&
+                        dataOutput.map((itemId, i) => (
+                            <ItemTile key={itemId} {...output[itemId]} />
+                        ))}
+                    {Boolean(dataOutput.length) &&
+                        formatPrice(addTPListing(output, dataOutput, input, dataInput))}
                 </div>
             )}
         </>
     );
+};
+
+const addTPListing = (output, dataOutput, input, dataInput) => {
+    const value =
+        multiplyCountPrice(
+            output[dataOutput[0]].item?.['min_sale_unit_price'],
+            output[dataOutput[0]].count,
+        ) - subtotal(dataInput, input, 'min_sale_unit_price');
+
+    return Math.floor(value - value * 0.15);
 };
 
 export const Recipe = React.memo(RecipeComponent);

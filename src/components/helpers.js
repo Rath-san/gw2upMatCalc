@@ -2,10 +2,10 @@ export const multiplyCountPrice = (price, count) => {
     return price * count;
 };
 
-export const subtotal = (array, key, recipe) =>
-    array.reduce((p, c) => {
+export const subtotal = (ids, items, key) =>
+    ids.reduce((p, c) => {
         return (
-            p + multiplyCountPrice(c?.[key], Number(recipe.input[c.data_id]))
+            p + multiplyCountPrice(items[c].count, Number(items[c].item?.[key]))
         );
     }, 0);
 
