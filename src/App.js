@@ -21,7 +21,6 @@ const App = () => {
     const [selectedRecipe, setSelectedRecipe] = React.useState(
         AVALIBLE_RECIPES[0].value
     );
-    const renders = React.useRef(0);
 
     const handleOnSelectChange = (newValue) => {
         setSelectedRecipe(newValue.target.value);
@@ -48,7 +47,7 @@ const App = () => {
                 {Boolean(RECIPES.length) &&
                     RECIPES.map((recipe, i) => (
                         <React.Fragment key={i}>
-                            <Recipe recipe={recipe} />
+                            <Recipe {...recipe} />
                             <hr style={{ margin: '1rem' }} />
                         </React.Fragment>
                     ))}
