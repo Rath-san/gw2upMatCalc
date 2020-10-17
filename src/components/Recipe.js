@@ -8,12 +8,10 @@ const RecipeComponent = (props) => {
     const { input, output } = props;
     const RECIPE_INPUT_IDS = React.useMemo(() => Object.keys(input), [input]);
     const RECIPE_OUTPUT_IDS = React.useMemo(() => Object.keys(output), [output]);
-    console.log('test');
     const { items, loading } = useGetItems(RECIPE_INPUT_IDS, RECIPE_OUTPUT_IDS);
     const ingredients = [...items.slice(0, 4)];
 
     const outputItem = findItemByKey(items, 'data_id', Number(RECIPE_OUTPUT_IDS[0]));
-    console.log(input);
 
     return (
         <>
